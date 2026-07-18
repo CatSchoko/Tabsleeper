@@ -7,17 +7,17 @@ A Chrome extension that actually unloads inactive tabs to free up RAM — not ju
 Tab Sleeper navigates idle tabs to a lightweight internal sleep page instead of merely suspending them. That means the original page's DOM, JavaScript, and cached images are fully released from memory, not just paused. Waking a tab is a deliberate action (click the Wake button) — no accidental reloads from a stray click, unlike Chrome's default tab discarding.
 
 Features
-🛌 Real memory savings — sleeping tabs are navigated away entirely, not just suspended
-🖱️ Wake only on purpose — clicking a sleeping tab does nothing; you must press the Wake button
-⏱️ Configurable idle timeout — put tabs to sleep after N minutes of inactivity
-📌 Smart exclusions — pinned tabs and tabs playing audio are skipped by default
-🚫 Whitelist — exclude specific domains from ever sleeping
-⌨️ Keyboard shortcut (Alt+S) — sleep the current tab instantly
-🖱️ Right-click menu — "Sleep this tab now" from the tab strip
-🔴 Badge counter — see at a glance how many tabs are asleep
-🎬 YouTube resume — remembers video playback position and resumes exactly there on wake
-🔁 Survives browser restarts — sleep state is encoded in the tab's own URL, not tied to Chrome's (unstable) tab IDs
-📊 Popup dashboard — list of sleeping tabs, "Wake All", and simple stats (currently sleeping / total ever slept / estimated savings)
+🛌 Real memory savings — sleeping tabs are navigated away entirely, not just suspended 
+🖱️ Wake only on purpose — clicking a sleeping tab does nothing; you must press the Wake button 
+⏱️ Configurable idle timeout — put tabs to sleep after N minutes of inactivity 
+📌 Smart exclusions — pinned tabs and tabs playing audio are skipped by default 
+🚫 Whitelist — exclude specific domains from ever sleeping 
+⌨️ Keyboard shortcut (Alt+S) — sleep the current tab instantly 
+🖱️ Right-click menu — "Sleep this tab now" from the tab strip 
+🔴 Badge counter — see at a glance how many tabs are asleep 
+🎬 YouTube resume — remembers video playback position and resumes exactly there on wake 
+🔁 Survives browser restarts — sleep state is encoded in the tab's own URL, not tied to Chrome's (unstable) tab IDs 
+📊 Popup dashboard — list of sleeping tabs, "Wake All", and simple stats (currently sleeping / total ever slept / estimated savings) 
 
 Installation
 Not yet on the Chrome Web Store — install manually:
