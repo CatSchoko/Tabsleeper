@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Tab Sleeper</title>
+<style>
+  :root {
+    --bg: #1c1c1e;
+    --card: #26262a;
+    --border: #38383c;
+    --text: #f2f2f2;
+    --muted: #9a9aa0;
+    --accent: #4a9eff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    width: 320px; margin: 0; padding: 0;
+    font-family: -apple-system, system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+  }
+  .header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 16px 10px;
+  }
+  .header .icon { font-size: 18px; }
+  .header h1 { font-size: 15px; margin: 0; flex: 1; font-weight: 600; }
+  .header .gear { color: var(--muted); font-size: 16px; cursor: default; }
+  .sub { font-size: 12px; color: var(--muted); padding: 0 16px 12px; margin-top: -6px; }
+
+  .section { padding: 12px 16px; border-top: 1px solid var(--border); }
+  .section h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--muted); margin: 0 0 10px;
+  }
+
+  .slider-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 6px; }
+  input[type="range"] {
+    width: 100%; accent-color: var(--accent); margin-top: 4px;
+  }
+  .slider-value { text-align: center; font-size: 13px; font-weight: 600; margin-top: 4px; }
+
+  label { display: block; font-size: 13px; margin-top: 10px; color: var(--text); }
+  input[type="text"] {
+    width: 100%; margin-top: 6px; padding: 8px; border-radius: 8px;
+    border: 1px solid var(--border); background: #1c1c1e; color: var(--text); font-size: 13px;
+  }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; font-size: 13px;
+  }
+  .switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider-toggle {
+    position: absolute; inset: 0; background: #48484a; border-radius: 20px; cursor: pointer; transition: .2s;
+  }
+  .slider-toggle::before {
+    content: ""; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px;
+    background: white; border-radius: 50%; transition: .2s;
+  }
+  input:checked + .slider-toggle { background: var(--accent); }
+  input:checked + .slider-toggle::before { transform: translateX(16px); }
+
+  button {
+    cursor: pointer; border: none; border-radius: 10px; padding: 10px 12px;
+    font-size: 13px; font-weight: 500; background: var(--accent); color: white; width: 100%;
+  }
+  button:hover { filter: brightness(1.1); }
+  .wake-btn { width: auto; padding: 5px 10px; font-size: 12px; border-radius: 7px; }
+
+  .tab-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; }
+  .tab-item + .tab-item { border-top: 1px solid var(--border); }
+  .tab-item img { width: 16px; height: 16px; border-radius: 3px; }
+  .tab-item span { flex: 1; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #emptyMsg { font-size: 12px; color: var(--muted); }
+
+  #status { font-size: 12px; color: #34d399; height: 14px; text-align: center; margin-top: 8px; }
+
+  .stats-row { display: flex; gap: 8px; }
+  .stat-box {
+    flex: 1; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px; text-align: center;
+  }
+  .stat-box .value { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .stat-box .label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .wake-all-btn { background: #3a3a3d; margin-top: 10px; }
+  .list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .list-header h2 { margin: 0; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <span class="icon">🌙</span>
+    <h1>Tab Sleeper</h1>
+    <span class="gear">⚙</span>
+  </div>
+  <div class="sub">Legt inaktive Tabs schlafen und spart Arbeitsspeicher.<br>Kurzbefehl: <strong>Alt+S</strong> · Rechtsklick auf Tab → sofort schlafen legen</div>
+
+  <div class="section">
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="value" id="statSleeping">0</div>
+        <div class="label">Schlafen gerade</div>
+      </div>
+      <div class="stat-box">
+        <div class="value" id="statTotal">0</div>
+        <div class="label">Insgesamt eingeschlafen</div>
+      </div>
+      <div class="stat-box">
+        <div class="value" id="statSavings">0 MB</div>
+        <div class="label">Geschätzt gespart</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Schlafzeit</h2>
+    <input type="range" id="idleMinutes" min="1" max="180" step="1">
+    <div class="slider-value"><span id="idleMinutesLabel">30</span> Min. Inaktivität</div>
+    <div class="slider-row"><span>1 Min</span><span>180 Min</span></div>
+  </div>
+
+  <div class="section">
+    <div class="list-header">
+      <h2 style="margin:0;">Schlafende Tabs</h2>
+    </div>
+    <div id="tabList"><div id="emptyMsg">Keine Tabs im Schlaf.</div></div>
+    <button class="wake-all-btn" id="wakeAll">Alle wecken</button>
+  </div>
+
+  <div class="section">
+    <button id="sleepNow">Aktuellen Tab jetzt schlafen legen</button>
+  </div>
+
+  <div class="section">
+    <h2>Ausnahmen</h2>
+    <label>
+      Whitelist-Domains (schlafen nie)
+      <input type="text" id="whitelist" placeholder="z.B. youtube.com, spotify.com">
+    </label>
+
+    <div class="toggle-row">
+      <span>Gepinnte Tabs ausschließen</span>
+      <label class="switch">
+        <input type="checkbox" id="excludePinned">
+        <span class="slider-toggle"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <span>Tabs mit Ton ausschließen</span>
+      <label class="switch">
+        <input type="checkbox" id="excludeAudible">
+        <span class="slider-toggle"></span>
+      </label>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
